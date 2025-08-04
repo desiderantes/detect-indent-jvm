@@ -1,0 +1,16 @@
+authors {
+  desiderantes {
+    name = "Mario Daniel Ruiz Saavedra"
+    email = "desiderantes93@gmail.com"
+    website = "https://desiderantes.com"
+    roles = [developer, maintainer]
+    notes = "Developer and Maintainer of the JVM version"
+  }
+  sindresorhus {
+    name = "Sindre Sorhus"
+    email = "sindresorhus@gmail.com"
+    website = "https://sindresorhus.com"
+    roles = [author]
+    notes = "Author of the original JS library"
+  }
+}

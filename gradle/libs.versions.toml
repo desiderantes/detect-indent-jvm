@@ -1,0 +1,13 @@
+[versions]
+java = "17"
+kotlin = "2.2.0"
+kotest = "5.9.1"
+dokka = "2.0.0"
+
+[libraries]
+kotest-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
+hocon = { group = "com.typesafe", name = "config", version = "1.4.3" }
+[plugins]
+dokka-main = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
+jreleaser = { id = "org.jreleaser", version = "1.19.0" }
