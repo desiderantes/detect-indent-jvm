@@ -1,11 +1,10 @@
 import org.jreleaser.model.Active
 
 plugins {
-  kotlin("jvm") version libs.versions.kotlin
   `java-library`
   `maven-publish`
   alias(libs.plugins.jreleaser)
-  alias(libs.plugins.dokka.javadoc)
+  alias(libs.plugins.benmanes)
 }
 
 group = Metadata.GROUP
@@ -20,8 +19,10 @@ repositories {
 }
 
 dependencies {
-  testImplementation(kotlin("test"))
-  testImplementation(libs.kotest.junit5)
+  api (libs.jspecify)
+  testImplementation(platform(libs.junit.bom))
+  testImplementation("org.junit.jupiter:junit-jupiter-engine")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.test {
@@ -30,15 +31,14 @@ tasks.test {
 
 tasks.jar {
   manifest {
-    attributes("Automatic-Module-Name" to "${project.group}.detect-indent")
+    attributes("Automatic-Module-Name" to "${project.group}.${Metadata.PROJECT_NAME}")
   }
 }
 
-kotlin {
-  jvmToolchain(libs.versions.java.get().toInt())
-}
-
 java {
+  toolchain {
+    languageVersion.set(libs.versions.java.map(JavaLanguageVersion::of))
+  }
   withSourcesJar()
   withJavadocJar()
 }
@@ -93,15 +93,9 @@ publishing {
   }
   repositories {
     maven {
-      name = "GitHubPackages"
-      url = uri("https://maven.pkg.github.com/desiderantes/detect-indent")
-      credentials {
-        username = project.findProperty("gpr.user") as String?
-        password = project.findProperty("gpr.key") as String?
-      }
+      url = uri(layout.buildDirectory.dir("staging-deployment"))
+      name = "staging"
     }
-
-    mavenCentral()
   }
 
 }
@@ -130,10 +124,7 @@ jreleaser {
       author(author.name)
     }
   }
-  signing {
-    active = Active.ALWAYS
-    armored = true
-  }
+  //
 
   release {
     github {
@@ -142,12 +133,18 @@ jreleaser {
     }
   }
   deploy {
+
     maven {
-      mavenCentral {
-        register("sonatype") {
+      github {
+        register("github-packages"){
           active = Active.ALWAYS
-          url = "https://central.sonatype.com/api/v1/publisher"
-          stagingRepository("target/staging-deploy")
+          url = "https://maven.pkg.github.com/${Metadata.PROJECT_OWNER}/${Metadata.PROJECT_NAME}"
+          sourceJar =true
+          javadocJar = true
+          verifyPom = true
+          checksums = true
+          repository = Metadata.PROJECT_NAME
+          stagingRepository("build/staging-deployment")
         }
       }
     }

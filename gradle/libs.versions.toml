@@ -1,13 +1,11 @@
 [versions]
 java = "17"
-kotlin = "2.2.0"
-kotest = "5.9.1"
-dokka = "2.0.0"
+junit = "5.13.4"
 
 [libraries]
-kotest-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
 hocon = { group = "com.typesafe", name = "config", version = "1.4.3" }
+jspecify = { group = "org.jspecify", name = "jspecify", version = "1.0.0" }
 [plugins]
-dokka-main = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
-jreleaser = { id = "org.jreleaser", version = "1.19.0" }
+jreleaser = { id = "org.jreleaser", version = "1.20.0" }
+benmanes = { id = "com.github.ben-manes.versions", version = "0.52.0" }
