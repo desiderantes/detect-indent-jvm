@@ -51,3 +51,10 @@ jobs:
       - name: Run JReleaser Full Release
         if: env.IS_RELEASE == 'true'
         run: ./gradlew jreleaserFullRelease
+
+      - name: Upload JReleaser logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jreleaser-logs
+          path: build/jreleaser/trace.log
