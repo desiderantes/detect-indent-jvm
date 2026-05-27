@@ -78,7 +78,7 @@ publishing {
           url.set(Metadata.Links.SCM)
         }
         developers {
-          getAuthorsFromFile().map { author ->
+          getAuthorsFromFile().forEach { author ->
             developer {
               id.set(author.id)
               name.set(author.name)
@@ -125,11 +125,14 @@ jreleaser {
   }
   signing {
     active = Active.ALWAYS
-    armored = true
+    pgp {
+      armored = true
+    }
   }
 
   release {
     github {
+      overwrite = true
       checksums = true
       changelog {
         formatted = Active.ALWAYS
@@ -156,4 +159,3 @@ jreleaser {
     }
   }
 }
-
