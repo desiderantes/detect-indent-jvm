@@ -49,12 +49,19 @@ jobs:
         run: ./gradlew publishAllPublicationsToStagingRepository
 
       - name: Run JReleaser Full Release
+        id: jreleaser
         if: env.IS_RELEASE == 'true'
         run: ./gradlew jreleaserFullRelease
 
+      - name: Prepare artifact
+        if: always() && steps.jreleaser.outcome == 'failure'
+        run: |
+          cp build/jreleaser/trace.log jreleaser.log
+
       - name: Upload JReleaser logs
-        if: failure()
+        if: always() && steps.jreleaser.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
-          path: build/jreleaser/trace.log
+          path: jreleaser.log
+          if-no-files-found: ignore
