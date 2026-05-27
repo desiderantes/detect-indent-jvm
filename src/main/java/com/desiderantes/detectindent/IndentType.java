@@ -6,7 +6,7 @@ import org.jspecify.annotations.NullMarked;
  * Enum class representing the type of indentation.
  */
 @NullMarked
-enum IndentType {
+public enum IndentType {
     SPACE(" ", 's'),
     TAB("\t", 't');
 

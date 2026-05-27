@@ -1,11 +1,12 @@
 package com.desiderantes.detectindent;
 
-
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 import static com.desiderantes.detectindent.IndentDetector.detectIndent;
@@ -17,11 +18,12 @@ class IndentTests {
     private static String getFile(@NonNull String path) {
 
         var url = IndentTests.class.getClassLoader().getResource(path);
+        assertNotNull(url, "Missing test resource: " + path);
 
         try (InputStream in = url.openStream()) {
             return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to read file: " + path, e);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to read file: " + path, e);
         }
     }
 

@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-  api (libs.jspecify)
+  api(libs.jspecify)
   testImplementation(platform(libs.junit.bom))
   testImplementation("org.junit.jupiter:junit-jupiter-engine")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -101,7 +101,6 @@ publishing {
 }
 
 jreleaser {
-  dryrun = true
   project {
     name = Metadata.PROJECT_NAME
     version = Metadata.VERSION
@@ -120,15 +119,22 @@ jreleaser {
       bugTracker = Metadata.Links.ISSUE_TRACKER
       contribute = Metadata.Links.SCM
     }
-    getAuthorsFromFile().map { author ->
+    getAuthorsFromFile().forEach { author ->
       author(author.name)
     }
   }
-  //
+  signing {
+    active = Active.ALWAYS
+    armored = true
+  }
 
   release {
     github {
       checksums = true
+      changelog {
+        formatted = Active.ALWAYS
+        preset = "conventional-commits"
+      }
       sign = true
     }
   }
@@ -136,10 +142,10 @@ jreleaser {
 
     maven {
       github {
-        register("github-packages"){
+        register("github-packages") {
           active = Active.ALWAYS
           url = "https://maven.pkg.github.com/${Metadata.PROJECT_OWNER}/${Metadata.PROJECT_NAME}"
-          sourceJar =true
+          sourceJar = true
           javadocJar = true
           verifyPom = true
           checksums = true
