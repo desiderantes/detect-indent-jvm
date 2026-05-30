@@ -54,7 +54,7 @@ jobs:
         if: env.IS_RELEASE == 'true'
         run: |
           set -o pipefail
-          ./gradlew jreleaserFullRelease --info -Djreleaser.trace=true 2>&1 | tee jreleaser-console.log
+          ./gradlew jreleaserFullRelease --debug -Djreleaser.trace=true 2>&1 | tee jreleaser-console.log
 
       - name: Prepare log artifact
         if: failure() && steps.jreleaser.outcome == 'failure'
