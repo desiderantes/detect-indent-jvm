@@ -35,10 +35,11 @@ jobs:
         run: ./gradlew build -x test
 
       - name: Run Gradle tests
+        id: tests
         run: ./gradlew test
 
       - name: Upload test results
-        if: always()
+        if: failure() && steps.tests.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: test-results
@@ -51,17 +52,20 @@ jobs:
       - name: Run JReleaser Full Release
         id: jreleaser
         if: env.IS_RELEASE == 'true'
-        run: ./gradlew jreleaserFullRelease
-
-      - name: Prepare artifact
-        if: always() && steps.jreleaser.outcome == 'failure'
         run: |
-          cp build/jreleaser/trace.log jreleaser.log
+          set -o pipefail
+          ./gradlew jreleaserFullRelease -Djreleaser.trace=true 2>&1 | tee jreleaser-console.log
+
+      - name: Prepare log artifact
+        if: failure() && steps.jreleaser.outcome == 'failure'
+        run: |
+          mkdir -p logs
+          [ -f jreleaser-console.log ] && cp jreleaser-console.log logs/console.log
+          [ -f build/jreleaser/trace.log ] && cp build/jreleaser/trace.log logs/trace.log || true
 
       - name: Upload JReleaser logs
-        if: always() && steps.jreleaser.outcome == 'failure'
+        if: failure() && steps.jreleaser.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
-          path: jreleaser.log
-          if-no-files-found: ignore
+          path: logs/
